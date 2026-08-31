@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Semanal por Casino</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .controls {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        select {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            border-top: 5px solid #3498db;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #2980b9;
+            font-size: 1.25em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #34495e;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 0.95em;
+            color: #555;
+        }
+        li {
+            margin-bottom: 4px;
+        }
+        .no-data {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Menú Semanal de Casinos UDP</h1>
+    
+    <div class="controls">
+        <label for="day-select" style="font-weight: bold; margin-right: 10px;">Selecciona el Día:</label>
+        <select id="day-select" onchange="updateMenu()">
+            <option value="2026-08-31">Lunes 31 de Agosto</option>
+            <option value="2026-09-01">Martes 1 de Septiembre</option>
+            <option value="2026-09-02">Miércoles 2 de Septiembre</option>
+            <option value="2026-09-03">Jueves 3 de Septiembre</option>
+            <option value="2026-09-04">Viernes 4 de Septiembre</option>
+        </select>
+    </div>
+
+    <div class="grid" id="menu-container">
+        <!-- Tarjetas generadas dinámicamente -->
+    </div>
+
+    <script>
+        const menuData = {"2026-08-31": {"Facultad de Salud y Odontolog\u00eda (FacSyO)": {"fondos": ["Cerdo al horno", "Salsa alfredo", "Salsa choclo"], "acompanamientos": ["Pastas", "Arroz"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Ingenier\u00eda y Ciencias (FIC)": {"fondos": ["Bolo\u00f1esa vacuno", "Cerdo teriyaki", "Pechuga de pollo a la cacerola"], "acompanamientos": ["Pastas", "Guiso de acelga"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Biblioteca Nicanor Parra (BNP)": {"fondos": ["Bolo\u00f1esa vegetatiana", "Pastel de atun", "Estofado vacuno", "Consome", "Hipocalorico"], "acompanamientos": ["Arroz", "pastas", "Ensaladas Variadas"], "postres": ["Fruta Natural", "Postre Leche", "Pasteleria", "Jalea"], "ensaladas": [], "sopas": []}, "Facultad de Comunicaci\u00f3n y Letras (FCyL)": {"fondos": ["Charquican vacuno", "Charquican soya", "Pollo a la plancha"], "acompanamientos": ["Fideos salteados"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Educaci\u00f3n (FED)": {"fondos": ["Salsa bontu", "Hamburguesa casera", "salsa con champi\u00f1on"], "acompanamientos": ["Pasta", "Pur\u00e9"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}}, "2026-09-01": {"Facultad de Salud y Odontolog\u00eda (FacSyO)": {"fondos": ["Pescado", "Carbonada de vacuno", "Tortilla porotos verdes"], "acompanamientos": ["Papas rusticas", "Arroz"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Ingenier\u00eda y Ciencias (FIC)": {"fondos": ["Chapsui de cerdo", "Pollo al jugo", "Porotos", "Hamburguesa a la pobre"], "acompanamientos": ["Arroz", "Papas fritas"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Biblioteca Nicanor Parra (BNP)": {"fondos": ["Garbanzos con longanizas", "Charquican con huevo", "Chapsui de Pollo", "Consome", "Hipocalorico"], "acompanamientos": ["Arroz", "Ensaladas Variadas"], "postres": ["Fruta Natural", "Postre Leche", "Pasteleria", "Jalea"], "ensaladas": [], "sopas": []}, "Facultad de Comunicaci\u00f3n y Letras (FCyL)": {"fondos": ["Cerdo mongoliano", "Hamburguesa soya tomate", "Pollo asado"], "acompanamientos": ["Arroz chaufa", "Papas fritas"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Educaci\u00f3n (FED)": {"fondos": ["Cerdo al horno", "Lentejas con chorizo", "Lentejas con huevo"], "acompanamientos": ["Papas cocida"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}}, "2026-09-02": {"Facultad de Salud y Odontolog\u00eda (FacSyO)": {"fondos": ["Strogonoff de pollo", "Bolo\u00f1esa de carne", "Bolonesa de soya"], "acompanamientos": ["Pasta", "Arroz"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Ingenier\u00eda y Ciencias (FIC)": {"fondos": ["Asado aleman vacuno", "Carne a la cacerola"], "acompanamientos": ["Pur\u00e9 zapallo camote", "Ratatouille"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Biblioteca Nicanor Parra (BNP)": {"fondos": ["Tortilla Zanahoria", "Paella", "Lasa\u00f1a", "Consome", "Hipocalorico"], "acompanamientos": ["Arroz", "Papas salteadas", "Ensaladas Variadas"], "postres": ["Fruta Natural", "Postre Leche", "Pasteleria", "Jalea"], "ensaladas": [], "sopas": []}, "Facultad de Comunicaci\u00f3n y Letras (FCyL)": {"fondos": ["Goulash de pollo", "Garbanzos", "Biffe de vacuno"], "acompanamientos": ["Spaghetti pesto", "Choclo a la crema"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Educaci\u00f3n (FED)": {"fondos": ["Mongoliano de pollo", "Salsa alfredo", "Fritos de coliflor"], "acompanamientos": ["Pasta", "Arroz"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}}, "2026-09-03": {"Facultad de Salud y Odontolog\u00eda (FacSyO)": {"fondos": ["Cerdo a la mostaza", "Pastel de papa carne", "Pastel de papa de soya"], "acompanamientos": ["Arroz"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Ingenier\u00eda y Ciencias (FIC)": {"fondos": ["Cerdo mongoliano", "Suprema de pollo", "Pollo asado"], "acompanamientos": ["Arroz", "Papas fritas"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Biblioteca Nicanor Parra (BNP)": {"fondos": ["Fritos de acelga", "Salsa Bolo\u00f1esa", "Pulpa a la chilena", "Consome", "Hipocalorico"], "acompanamientos": ["Arroz", "Pastas", "Ensaladas Variadas"], "postres": ["Fruta Natural", "Postre Leche", "Pasteleria", "Jalea"], "ensaladas": [], "sopas": []}, "Facultad de Comunicaci\u00f3n y Letras (FCyL)": {"fondos": ["Chuleta de centro", "Frito de zanahoria", "Lasa\u00f1a vacuno", "Lasa\u00f1a soya"], "acompanamientos": ["Pur\u00e9 lionesa"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Educaci\u00f3n (FED)": {"fondos": ["Pollo asado", "Chaufa de cerdo", "Tortilla de zanahoria"], "acompanamientos": ["Pur\u00e9", "Arroz"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}}, "2026-09-04": {"Facultad de Salud y Odontolog\u00eda (FacSyO)": {"fondos": ["Pollo Asado", "Hamburguesa en salsa", "Hamburguesa vegetariana"], "acompanamientos": ["Papas fritas", "Arroz"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Ingenier\u00eda y Ciencias (FIC)": {"fondos": ["Hamburguesa casera", "Pollo a la plancha con salsa champi\u00f1on"], "acompanamientos": ["Arroz primavera", "Gratin de papas"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Biblioteca Nicanor Parra (BNP)": {"fondos": ["Guiso de verduras", "Hamburguesa Vacuno", "Ravioles", "consome", "Hipocalorico"], "acompanamientos": ["Papas Doradas", "Arroz", "Ensaladas Variadas"], "postres": ["Fruta Natural", "Postre Leche", "Pasteleria", "Jalea"], "ensaladas": [], "sopas": []}, "Facultad de Comunicaci\u00f3n y Letras (FCyL)": {"fondos": ["Carne teriyaki", "Guiso de verduras", "Aj\u00ed de gallina"], "acompanamientos": ["Arroz", "Papas doradas"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}, "Facultad de Educaci\u00f3n (FED)": {"fondos": ["Pescado", "Asado Aleman", "Chapsui de verduras"], "acompanamientos": ["Papas fritas", "Arroz"], "postres": ["POSTRES DEL D\u00cdA"], "ensaladas": ["ENSALADAS DEL D\u00cdA"], "sopas": ["SOPA DEL D\u00cdA"]}}};
+        
+        function updateMenu() {
+            const selectedDay = document.getElementById('day-select').value;
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+            
+            const dayData = menuData[selectedDay];
+            
+            for (const casino in dayData) {
+                const data = dayData[casino];
+                
+                let cardHtml = `<div class="card">
+                    <h2>${casino}</h2>`;
+                    
+                if (data.fondos.length > 0) {
+                    cardHtml += `<div class="section-title">Platos de Fondo</div><ul>`;
+                    data.fondos.forEach(item => cardHtml += `<li>${item}</li>`);
+                    cardHtml += `</ul>`;
+                }
+                
+                if (data.acompanamientos.length > 0) {
+                    cardHtml += `<div class="section-title">Acompañamientos</div><ul>`;
+                    data.acompanamientos.forEach(item => cardHtml += `<li>${item}</li>`);
+                    cardHtml += `</ul>`;
+                }
+                
+                if (data.sopas.length > 0) {
+                    cardHtml += `<div class="section-title">Sopa</div><ul>`;
+                    data.sopas.forEach(item => cardHtml += `<li>${item}</li>`);
+                    cardHtml += `</ul>`;
+                }
+                
+                if (data.ensaladas.length > 0) {
+                    cardHtml += `<div class="section-title">Ensaladas</div><ul>`;
+                    data.ensaladas.forEach(item => cardHtml += `<li>${item}</li>`);
+                    cardHtml += `</ul>`;
+                }
+                
+                if (data.postres.length > 0) {
+                    cardHtml += `<div class="section-title">Postres</div><ul>`;
+                    data.postres.forEach(item => cardHtml += `<li>${item}</li>`);
+                    cardHtml += `</ul>`;
+                }
+                
+                if (data.fondos.length === 0 && data.acompanamientos.length === 0) {
+                    cardHtml += `<p class="no-data">No hay menú registrado para este día.</p>`;
+                }
+                
+                cardHtml += `</div>`;
+                container.innerHTML += cardHtml;
+            }
+        }
+        
+        // Cargar menú del primer día por defecto
+        window.onload = updateMenu;
+    </script>
+</body>
+</html>
